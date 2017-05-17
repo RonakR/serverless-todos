@@ -1,3 +1,4 @@
+const completed = require('./src/events/completed');
 const createTodo = require('./src/todos/create');
 const deleteTodo = require('./src/todos/delete');
 const getTodo = require('./src/todos/get');
@@ -28,5 +29,10 @@ module.exports = {
     }
     // Use this code if you don't use the http event with the LAMBDA-PROXY integration
     // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
+  },
+  completedHandler: (event, context, callback) => {
+    completed(context)
+      .then(result => callback(null, result))
+      .catch(err => callback(err));
   },
 };

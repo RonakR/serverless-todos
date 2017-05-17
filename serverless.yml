@@ -2,6 +2,7 @@ service: serverless-todos
 
 custom:
   todosTableName: todos
+  todosCompletedSnsTopic: todosCompleted
 
 plugins:
   - serverless-offline
@@ -11,6 +12,7 @@ provider:
   runtime: nodejs4.3
   environment:
     TODOS_TABLE: '${self:custom.todosTableName}'
+    COMPLETED_TOPIC: '${self:custom.todosCompletedSnsTopic}'
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -22,6 +24,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:*:*:*"
+    - Effect: Allow
+      Action:
+        - sns:*
+      Resource: '*'
 
 functions:
   todos:
@@ -41,6 +47,17 @@ functions:
       - http:
           path: /todos/{id}
           method: delete
+  completed:
+    handler: handler.completedHandler
+    description: Handles couting of completed tasks
+    name: completedHandler
+    events:
+      - schedule: rate(1 minute)
+  snsListner:
+    handler: handler.snsListner
+    description: Listens to SNS topics
+    events:
+      - sns: '${self:custom.todosCompletedSnsTopic}'
 
 resources:
   Resources:
@@ -51,6 +68,9 @@ resources:
           -
             AttributeName: id
             AttributeType: S
+          -
+            AttributeName: completed
+            AttributeType: N
         KeySchema:
           -
             AttributeName: id
@@ -58,4 +78,20 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          -
+            IndexName: completedIndex
+            KeySchema:
+              -
+                AttributeName: completed
+                KeyType: HASH
+              -
+                AttributeName: id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
         TableName: '${self:custom.todosTableName}'
