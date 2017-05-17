@@ -25,7 +25,7 @@ provider:
 
 functions:
   todos:
-    handler: handler.todos
+    handler: handler.todosHandler
     description: Handles endpoints for Todos
     name: TodosHandler
     events:

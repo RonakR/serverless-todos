@@ -1,18 +1,15 @@
-'use strict';
+const createTodo = require('./src/todos/create');
 
-module.exports.hello = (event, context, callback) => {
-  const name = (event.queryStringParameters && event.queryStringParameters.name) ?
-    event.queryStringParameters.name : "World";
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Hello, ${name}`,
-      input: event,
-    }),
-  };
-
-  callback(null, response);
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
+module.exports = {
+  todosHandler: (event, context, callback) => {
+    if (event.httpMethod === 'GET') {
+      console.log('Got GET');
+    } else if (event.httpMethod === 'POST') {
+      createTodo(event.body)
+        .then(result => callback(null, result))
+        .catch(err => callback(err));
+    }
+    // Use this code if you don't use the http event with the LAMBDA-PROXY integration
+    // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
+  },
 };
