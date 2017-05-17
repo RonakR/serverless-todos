@@ -1,0 +1,25 @@
+{
+  "name": "serverless-todos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "dependencies": {
+    "serverless-offline": "^3.14.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RonakR/serverless-todos.git"
+  },
+  "author": "Ronak Raithatha <ronaksraithatha@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RonakR/serverless-todos/issues"
+  },
+  "homepage": "https://github.com/RonakR/serverless-todos#readme"
+}
