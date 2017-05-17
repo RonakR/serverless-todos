@@ -36,10 +36,10 @@ functions:
           path: /todos
           method: post
       - http:
-          path: /todos
+          path: /todos/{id}
           method: put
       - http:
-          path: /todos
+          path: /todos/{id}
           method: delete
 
 resources:
