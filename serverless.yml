@@ -24,12 +24,23 @@ provider:
       Resource: "arn:aws:dynamodb:*:*:*"
 
 functions:
-  hello:
-    handler: handler.hello
+  todos:
+    handler: handler.todos
+    description: Handles endpoints for Todos
+    name: TodosHandler
     events:
       - http:
-          path: /hello
+          path: /todos
           method: get
+      - http:
+          path: /todos
+          method: post
+      - http:
+          path: /todos
+          method: put
+      - http:
+          path: /todos
+          method: delete
 
 resources:
   Resources:
