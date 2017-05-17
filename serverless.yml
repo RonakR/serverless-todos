@@ -1,11 +1,27 @@
 service: serverless-todos
 
+custom:
+  todosTableName: todos
+
 plugins:
   - serverless-offline
 
 provider:
   name: aws
   runtime: nodejs4.3
+  environment:
+    TODOS_TABLE: '${self:custom.todosTableName}'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:*:*:*"
 
 functions:
   hello:
@@ -14,3 +30,21 @@ functions:
       - http:
           path: /hello
           method: get
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: '${self:custom.todosTableName}'
