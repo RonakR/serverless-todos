@@ -9,11 +9,14 @@ module.exports = (body) => {
       TableName: process.env.TODOS_TABLE,
     };
 
+    console.log('Dynamo Params: ', dynamoParams);
+
     dynamoDb.scan(dynamoParams, (err, result) => {
       if (err) {
-        console.error('Unsuccessful get todo: ', err);
-        reject(new Error('Unsuccessful get todo'));
+        console.error('Unsuccessful todo get: ', err);
+        reject(new Error('Unsuccessful todo get'));
       } else {
+        console.log('Successful todo get');
         const response = {
           statusCode: 200,
           body: JSON.stringify(result.Items),

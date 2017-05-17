@@ -26,13 +26,14 @@ module.exports = (todoId, body) => {
       ReturnValues: 'UPDATED_NEW',
     };
 
-    console.log(dynamoParams);
+    console.log('Dynamo Params: ', dynamoParams);
+
     dynamoDb.update(dynamoParams, (err, result) => {
       if (err) {
         console.error('Unsuccessful todo update: ', err);
         reject(new Error('Unsuccessful todo update'));
       } else {
-        console.log('Result from DB:', result);
+        console.log('Successful todo update');
         const response = {
           statusCode: 200,
           body: JSON.stringify(result.Attributes),

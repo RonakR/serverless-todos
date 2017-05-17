@@ -13,12 +13,14 @@ module.exports = (todoId) => {
       }
     };
 
+    console.log('Dynamo Params: ', dynamoParams);
+
     dynamoDb.delete(dynamoParams, (err, result) => {
       if (err) {
         console.error('Unsuccessful todo delete: ', err);
         reject(new Error('Unsuccessful todo delete'));
       } else {
-        console.log('Result from DB:', result);
+        console.log('Successful todo delete');
         const response = {
           statusCode: 204,
         };

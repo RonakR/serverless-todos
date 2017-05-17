@@ -20,11 +20,14 @@ module.exports = (body) => {
       },
     };
 
+    console.log('Dynamo Params: ', dynamoParams);
+
     dynamoDb.put(dynamoParams, (err, result) => {
       if (err) {
         console.error('Unsuccessful todo create: ', err);
         reject(new Error('Unsuccessful todo create'));
       } else {
+        console.log('Successful todo create')
         const response = {
           statusCode: 200,
           body: JSON.stringify(dynamoParams.Item),
