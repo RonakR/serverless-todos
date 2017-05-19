@@ -38,9 +38,10 @@ function publishToSNS(numCompleted, context) {
     let snsArn = context.invokedFunctionArn;
     snsArn = snsArn.replace('lambda', 'sns');
     snsArn = snsArn.replace(`function:${context.functionName}`, process.env.COMPLETED_TOPIC);
+    const snsMessage = { "completed": numCompleted }
     const snsParams = {
         TargetArn: snsArn,
-        Message: JSON.stringify({completed: numCompleted}),
+        Message: JSON.stringify(snsMessage),
     };
 
     console.log('Sns Params', snsParams);
