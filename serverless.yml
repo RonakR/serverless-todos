@@ -9,7 +9,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs4.3
+  runtime: nodejs6.10
   environment:
     TODOS_TABLE: '${self:custom.todosTableName}'
     COMPLETED_TOPIC: '${self:custom.todosCompletedSnsTopic}'
@@ -56,6 +56,7 @@ functions:
   snsListner:
     handler: handler.snsListner
     description: Listens to SNS topics
+    name: snsListner
     events:
       - sns: '${self:custom.todosCompletedSnsTopic}'
 

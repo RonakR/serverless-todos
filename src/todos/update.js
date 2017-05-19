@@ -21,7 +21,7 @@ module.exports = (todoId, body) => {
         ':todoId': todoId,
         ':todoText': data.text,
         ':time': time,
-        ':completed': data.completed,
+        ':completed': Number(data.completed),
       },
       ReturnValues: 'UPDATED_NEW',
     };

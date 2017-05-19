@@ -13,7 +13,7 @@ function getNumCompleted() {
       ExpressionAttributeValues: {
         ':completed': 1,
       },
-      ProjectionExpression: 'transactionId',
+      ProjectionExpression: 'modifiedAt',
     };
     console.log('Dynamo Params', dynamoParams);
 
@@ -22,23 +22,32 @@ function getNumCompleted() {
         reject(err);
       } else {
         console.log('Completed Todos: ', result.Items);
-        resolve(result.Items.length);
+        let recentlyCompleted = result.Items.reduce((acc, cur) => {
+          if(moment().subtract(1, 'minute').isBefore(moment(cur.modifiedAt))) acc = acc + 1;
+          return acc
+        }, 0)
+        console.log('Recently complete:', recentlyCompleted);
+        resolve(recentlyCompleted.length);
       }
     });
   });
 }
 
-function publishToSNS() {
+function publishToSNS(numCompleted, context) {
   return new Promise((resolve, reject) => {
+    let snsArn = context.invokedFunctionArn;
+    snsArn = snsArn.replace('lambda', 'sns');
+    snsArn = snsArn.replace(`function:${context.functionName}`, process.env.COMPLETED_TOPIC);
     const snsParams = {
         TargetArn: snsArn,
-        Message: strTran,
-      };
+        Message: JSON.stringify({completed: numCompleted}),
+    };
+
     console.log('Sns Params', snsParams);
 
     sns.publish(snsParams, (err, data) => {
       if (err) {
-        consle.log(`error publishing topic ${process.env.COMPLETED_TOPIC} `, err);
+        console.log(`error publishing topic ${process.env.COMPLETED_TOPIC} `, err);
         reject(err);
       } else {
         console.log('Published without Error:'.concat(JSON.stringify(snsParams)).concat(JSON.stringify(data)));
@@ -49,14 +58,9 @@ function publishToSNS() {
 }
 module.exports = (context) => {
   return new Promise((resolve, reject) => {
-
-    let snsArn = context.invokedFunctionArn;
-    snsArn = snsArn.replace('lambda', 'sns');
-    snsArn = snsArn.replace(`function:${context.functionName}`, process.env.DOTLOOP_UPDATE_SIGNAL);
-
     getNumCompleted()
-      .then(result => publishToSNS(result))
+      .then(result => publishToSNS(result, context))
       .then(result => resolve(result))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 };
