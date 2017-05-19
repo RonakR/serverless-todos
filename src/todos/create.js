@@ -14,7 +14,7 @@ module.exports = (body) => {
       Item: {
         id: uuid.v1(),
         todoText: data.text,
-        checked: false,
+        completed: 0,
         createdAt: time,
         modifiedAt: time,
       },

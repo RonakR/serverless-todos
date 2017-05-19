@@ -15,13 +15,13 @@ module.exports = (todoId, body) => {
       },
       UpdateExpression: 'SET todoText = :todoText,' +
       'modifiedAt = :time,' +
-      'checked = :checked',
+      'completed = :completed',
       ConditionExpression: 'id = :todoId',
       ExpressionAttributeValues: {
         ':todoId': todoId,
         ':todoText': data.text,
         ':time': time,
-        ':checked': data.checked,
+        ':completed': Number(data.completed),
       },
       ReturnValues: 'UPDATED_NEW',
     };
